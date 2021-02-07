@@ -1,6 +1,8 @@
 # 📦 AllParcels
 This is an app that gathers the freshest copies of all the parcels in Washington State using primary data sources.
 
+![image](https://user-images.githubusercontent.com/11726956/107158443-db1e0a80-693e-11eb-847d-a32401cc0c66.png)
+
 # 2020 Parcel Snapshot
 The state publishes a yearly parcels snapshot here: 
 
@@ -62,14 +64,17 @@ https://uncheckederror.github.io/KingCountyArcGISJS/wa-state-parcels.html
 * 🟨 - Inadequate Data
 * Unshaded/Transparent - Useable Data (zoom in to view the parcels)
 
-# How to use this app
+# How to build and run this project
 1. Clone this repository to your machine.
 2. Using a file browser navigate to the root directory of the project on your machine.
 3. Open the .sln Solution file in Visual Studio 2019.
 4. Click the green run button near the top-center of the Visual Studio window.
+![image](https://user-images.githubusercontent.com/11726956/107158380-6a76ee00-693e-11eb-92c4-cb605f3ecc80.png)
 5. Watch the console prompt as the files are downloaded to your machine.
+![image](https://user-images.githubusercontent.com/11726956/107158354-4b785c00-693e-11eb-806b-63e78e166e74.png)
 6. Using a file browser navigate to the file path provided as the final line in the console window (projectRoot/AllParcels).
 7. Open the shapefiles in this folder in ArcMap, ArcGIS Pro, [QGIS](https://qgis.org/en/site/forusers/download.html#) or whatever tool you prefer.
+![image](https://user-images.githubusercontent.com/11726956/107158443-db1e0a80-693e-11eb-847d-a32401cc0c66.png)
 8. Enjoy! 🚀
 
 Note: You can also run this from command line or VSCode if you have the latest version of [dotnet](https://dotnet.microsoft.com/) installed by setting the current directory to this project and using the "dotnet run" command. There's no platform specific code in this project so it should run on MacOS and Linux without modification although this has not been tested.
