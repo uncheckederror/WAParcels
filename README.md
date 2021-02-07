@@ -69,7 +69,7 @@ https://uncheckederror.github.io/KingCountyArcGISJS/wa-state-parcels.html
 4. Click the green run button near the top-center of the Visual Studio window.
 5. Watch the console prompt as the files are downloaded to your machine.
 6. Using a file browser navigate to the file path provided as the final line in the console window (projectRoot/AllParcels).
-7. Open the shapefiles in this folder in ArcMap, ArcGIS Pro, QGIS or whatever tool you prefer.
+7. Open the shapefiles in this folder in ArcMap, ArcGIS Pro, [QGIS](https://qgis.org/en/site/forusers/download.html#) or whatever tool you prefer.
 8. Enjoy! 🚀
 
 Note: You can also run this from command line or VSCode if you have the latest version of [dotnet](https://dotnet.microsoft.com/) installed by setting the current directory to this project and using the "dotnet run" command. There's no platform specific code in this project so it should run on MacOS and Linux without modification although this has not been tested.
