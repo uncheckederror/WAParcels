@@ -196,7 +196,7 @@ namespace AllParcels
                     };
                 }
 
-                var root = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                var root = Path.GetDirectoryName(AppContext.BaseDirectory);
                 var sink = Path.Combine(root, host, DateTime.Now.ToString("yyyy-MM-dd"));
 
                 // Verify that the sink directory exists, and create it otherwise.
@@ -274,7 +274,7 @@ namespace AllParcels
                     };
                 }
 
-                var root = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                var root = Path.GetDirectoryName(AppContext.BaseDirectory);
                 var sink = Path.Combine(root, Name.Trim(), DateTime.Now.ToString("yyyy-MM-dd"));
 
                 // Verify that the sink directory exists, and create it otherwise.
@@ -358,7 +358,7 @@ namespace AllParcels
                     return false;
                 }
 
-                var root = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                var root = Path.GetDirectoryName(AppContext.BaseDirectory);
                 var sink = Path.Combine(root, Name.Trim(), DateTime.Now.ToString("yyyy-MM-dd"));
 
                 // Verify that the sink directory exists, and create it otherwise.
