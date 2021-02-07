@@ -350,7 +350,6 @@ namespace AllParcels
                 var address = new Uri(DataSource);
                 var host = address.Host;
                 var scheme = address.Scheme;
-                var fileName = address.Segments.LastOrDefault();
 
                 // Bail if its not a file.
                 if (!((scheme == Uri.UriSchemeHttp) || (scheme == Uri.UriSchemeHttps)))
@@ -370,7 +369,7 @@ namespace AllParcels
 
                 try
                 {
-                    RawFilePath = await DataSource.DownloadFileAsync(sink, fileName).ConfigureAwait(false);
+                    RawFilePath = await DataSource.DownloadFileAsync(sink).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -382,7 +381,7 @@ namespace AllParcels
                 Log.Information(RawFilePath);
                 var fileExtension = Path.GetExtension(RawFilePath);
 
-                if (fileExtension == ".zip")
+                if (fileExtension == ".zip" || string.IsNullOrWhiteSpace(fileExtension))
                 {
                     Zipped = true;
                     Downloaded = true;
