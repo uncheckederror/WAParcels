@@ -114,6 +114,7 @@ namespace AllParcels
                         }
                         else
                         {
+                            county.Succeeded = false;
                             Log.Error("Source path does not exist!");
                         }
                     }
@@ -151,7 +152,7 @@ namespace AllParcels
                 }
             }
 
-            Log.Information($"Successfully download parcels from {counties.Where(x => x.Downloaded == true).Count()} of {counties.Count} counties attempted.");
+            Log.Information($"Successfully download parcels from {counties.Where(x => x.Succeeded == true).Count()} of {counties.Count} counties attempted.");
             Log.Information($"Ingested data can be found at:");
             Log.Information(targetFolderPath);
         }
