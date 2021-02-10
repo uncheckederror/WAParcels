@@ -160,6 +160,7 @@ namespace AllParcels
         public class County
         {
             public string Name { get; set; }
+            public string State { get; set; }
             public string DataSource { get; set; }
             public string ParcelViewer { get; set; }
             public string ParcelDetails { get; set; }
