@@ -36,16 +36,18 @@ namespace AllParcels
 
             var root = Path.GetDirectoryName(AppContext.BaseDirectory);
 
+            Log.Information(root);
+
             // This is the output folder.
             var targetFolderPath = Path.Combine(root, "AllParcels");
+
+            Log.Information($"Ingested artifacts will be saved to {targetFolderPath}");
 
             // Verify that the output directory exists, and create it otherwise.
             if (!Directory.Exists(targetFolderPath))
             {
                 Directory.CreateDirectory(targetFolderPath);
             }
-
-            Log.Information($"Ingested artifacts will be saved to {targetFolderPath}");
 
             // Load county specific information from the JSON file.
             var counties = new List<County>();
