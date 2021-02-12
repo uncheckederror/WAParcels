@@ -39,7 +39,7 @@ namespace AllParcels
             Log.Information(root);
 
             // This is the output folder.
-            var targetFolderPath = Path.Combine(root, "AllParcels");
+            var targetFolderPath = Path.Combine(root, "Artifacts");
 
             Log.Information($"Ingested artifacts will be saved to {targetFolderPath}");
 
