@@ -24,4 +24,4 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Run
-      run: dotnet run --no-build --verbosity normal
+      run: dotnet run
