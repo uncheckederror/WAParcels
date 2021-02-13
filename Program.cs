@@ -149,13 +149,18 @@ namespace AllParcels
                             }
                         }
 
-                        // Zip up the output files.
-                        ZipFile.CreateFromDirectory(targetFolderPath, "WA.zip");
-
                         Log.Information($"Copied {fileNames.Count} {county.Name} County files to the Parcels folder.");
                     }
                 }
             }
+
+            if (File.Exists(Path.Combine(AppContext.BaseDirectory, "WA.zip")))
+            {
+                File.Delete(Path.Combine(AppContext.BaseDirectory, "WA.zip"));
+            }
+
+            // Zip up the output files.
+            ZipFile.CreateFromDirectory(targetFolderPath, Path.Combine(AppContext.BaseDirectory, "WA.zip"));
 
             Log.Information($"Successfully download parcels from {counties.Where(x => x.Succeeded == true).Count()} of {counties.Count} counties attempted.");
             Log.Information($"Ingested data can be found at:");
