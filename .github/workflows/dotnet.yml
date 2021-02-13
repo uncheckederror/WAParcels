@@ -25,3 +25,8 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Run
       run: dotnet run
+    - uses: actions/download-artifact@v2
+      with:
+        path: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0/Artifacts/   
+    - name: Display structure of downloaded files
+      run: ls -R
