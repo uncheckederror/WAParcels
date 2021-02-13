@@ -27,7 +27,7 @@ jobs:
       run: dotnet run
     - name: Display structure of the files
       run: ls -R
-      working-directory: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0
+      working-directory: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0/Artifacts
     - uses: actions/upload-artifact@v2
       with:
-        path: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0
+        path: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0/Artifacts
