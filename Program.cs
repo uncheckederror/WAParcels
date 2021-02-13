@@ -149,6 +149,9 @@ namespace AllParcels
                             }
                         }
 
+                        // Zip up the output files.
+                        ZipFile.CreateFromDirectory(targetFolderPath, "WA.zip");
+
                         Log.Information($"Copied {fileNames.Count} {county.Name} County files to the Parcels folder.");
                     }
                 }
