@@ -30,4 +30,5 @@ jobs:
       working-directory: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0/WA
     - uses: actions/upload-artifact@v2
       with:
-        path: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0/WA
+        path: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0/WA.zip
+    - uses: actions/checkout@v2
