@@ -1,12 +1,12 @@
 # 📦 AllParcels
 This is an app that gathers the freshest copies of all the parcels in Washington State using primary data sources.
 
+[Get the parcels here!](https://uncheckederror.github.io/AllParcels/)
+
 ![image](https://user-images.githubusercontent.com/11726956/107158443-db1e0a80-693e-11eb-847d-a32401cc0c66.png)
 
 # 2020 Parcel Snapshot
-The state publishes a yearly parcels snapshot here: 
-
-https://geo.wa.gov/datasets/3dca0b72eae94c098b21329e1e61afd7_0
+The state publishes a [yearly parcels snapshot](https://geo.wa.gov/datasets/3dca0b72eae94c098b21329e1e61afd7_0).
 
 This project has the same goal, but rather than a one time snapshot this app will give you the freshest parcel data everytime it's run.
 
@@ -72,7 +72,7 @@ https://uncheckederror.github.io/KingCountyArcGISJS/wa-state-parcels.html
 ![image](https://user-images.githubusercontent.com/11726956/107158380-6a76ee00-693e-11eb-92c4-cb605f3ecc80.png)
 5. Watch the console prompt as the files are downloaded to your machine.
 ![image](https://user-images.githubusercontent.com/11726956/107158354-4b785c00-693e-11eb-806b-63e78e166e74.png)
-6. Using a file browser navigate to the file path provided as the final line in the console window (projectRoot/AllParcels).
+6. Using a file browser navigate to the file path provided as the final line in the console window (projectRoot/WA).
 7. Open the shapefiles in this folder in ArcMap, ArcGIS Pro, [QGIS](https://qgis.org/en/site/forusers/download.html#) or whatever tool you prefer.
 ![image](https://user-images.githubusercontent.com/11726956/107158443-db1e0a80-693e-11eb-847d-a32401cc0c66.png)
 8. Enjoy! 🚀
