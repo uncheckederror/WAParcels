@@ -34,12 +34,10 @@ namespace AllParcels
                             .AddJsonFile("appsettings.json")
                             .Build();
 
-            var root = Path.GetDirectoryName(AppContext.BaseDirectory);
-
-            Log.Information(root);
+            Log.Information(AppContext.BaseDirectory);
 
             // This is the output folder.
-            var targetFolderPath = Path.Combine(root, "WA");
+            var targetFolderPath = Path.Combine(AppContext.BaseDirectory, "WA");
 
             Log.Information($"Ingested artifacts will be saved to {targetFolderPath}");
 
@@ -109,9 +107,9 @@ namespace AllParcels
                             foreach (string s in files)
                             {
                                 // Use static Path methods to extract only the file name from the path.
-                                var fileName = System.IO.Path.GetFileName(s);
-                                var destFile = System.IO.Path.Combine(county.ResultFilePath, fileName);
-                                System.IO.File.Copy(s, destFile, true);
+                                var fileName = Path.GetFileName(s);
+                                var destFile = Path.Combine(county.ResultFilePath, fileName);
+                                File.Copy(s, destFile, true);
                             }
                         }
                         else
@@ -145,7 +143,7 @@ namespace AllParcels
                             FileInfo currentFile = new FileInfo(Path.Combine(county.RawFilePath, file));
                             if (currentFile.Exists)
                             {
-                                File.Copy(currentFile.FullName, county.ResultFilePath + "\\" + county.Name + currentFile.Extension, true);
+                                File.Copy(currentFile.FullName, Path.Combine(county.ResultFilePath, county.Name + currentFile.Extension), true);
                             }
                         }
 
