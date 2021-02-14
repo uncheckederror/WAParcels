@@ -5,6 +5,8 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  schedule:
+    - cron: "0 12 * * *"
 
 jobs:
   build:
@@ -28,9 +30,6 @@ jobs:
     - name: Display structure of the files
       run: ls -R
       working-directory: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0/
-    - name: Display structure of the files
-      run: ls -R
-      working-directory: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0\WA
     - uses: actions/upload-artifact@v2
       with:
-        path: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0\WA
+        path: /home/runner/work/AllParcels/AllParcels/bin/Debug/net5.0/WA
