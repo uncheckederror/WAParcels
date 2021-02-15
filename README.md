@@ -1,7 +1,7 @@
-# 📦 AllParcels
+# 📦 WAParcels
 This is an app that gathers the freshest copies of all the parcels in Washington State using primary data sources.
 
-[Get the parcels here!](https://uncheckederror.github.io/AllParcels/)
+[Get the parcels here!](https://uncheckederror.github.io/WAParcels/)
 
 ![image](https://user-images.githubusercontent.com/11726956/107158443-db1e0a80-693e-11eb-847d-a32401cc0c66.png)
 
