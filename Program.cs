@@ -91,6 +91,19 @@ namespace AllParcels
                         county.Downloaded = await county.TryDownloadFTPFile().ConfigureAwait(false);
                     }
 
+                    // Wait and then retry failed requests.
+                    if (!county.Downloaded)
+                    {
+                        await Task.Delay(1000);
+                        county.Downloaded = await county.TryDownloadFile().ConfigureAwait(false);
+                    }
+
+                    if (!county.Downloaded)
+                    {
+                        await Task.Delay(1000);
+                        county.Downloaded = await county.TryDownloadFTPFile().ConfigureAwait(false);
+                    }
+
                     // Unzip the data.
                     if (county.Zipped && county.Downloaded)
                     {
@@ -120,11 +133,7 @@ namespace AllParcels
                     }
 
                     // Grab only the files that we need.
-                    if (!county.Downloaded)
-                    {
-                        continue;
-                    }
-                    else
+                    if (county.Downloaded)
                     {
                         // ESRI shapefiles have mandatory and optional files. 
                         // The mandatory file extensions needed for a shapefile are .shp, .shx and .dbf. 
@@ -157,10 +166,21 @@ namespace AllParcels
                 File.Delete(Path.Combine(AppContext.BaseDirectory, "WA.zip"));
             }
 
+            // This step isnow redundant because github actions automatically compress artifacts.
             // Zip up the output files.
-            ZipFile.CreateFromDirectory(targetFolderPath, Path.Combine(AppContext.BaseDirectory, "WA.zip"));
+            //ZipFile.CreateFromDirectory(targetFolderPath, Path.Combine(AppContext.BaseDirectory, "WA.zip"));
 
             Log.Information($"Successfully download parcels from {counties.Where(x => x.Succeeded == true).Count()} of {counties.Count} counties attempted.");
+            var failed = counties.Where(x => x.Succeeded == false).ToArray();
+            if (failed is not null && failed.Any())
+            {
+                Log.Error($"Failed to download parcels from these counties:");
+                var output = string.Empty;
+                foreach (var fail in failed)
+                {
+                    Log.Error($"{fail?.Name} - {fail?.DataSource}");
+                }
+            }
             Log.Information($"Ingested data can be found at:");
             Log.Information(targetFolderPath);
         }
