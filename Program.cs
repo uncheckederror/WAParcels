@@ -1,17 +1,18 @@
 ﻿using FluentFTP;
-using Microsoft.Extensions.Configuration;
 
 using Flurl.Http;
 
+using Microsoft.Extensions.Configuration;
+
+using Serilog;
+
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Text.Json;
-using Serilog;
 
 namespace AllParcels
 {
@@ -338,7 +339,7 @@ namespace AllParcels
 
                 var result = await client.DownloadFileAsync(sink, sourceFile).ConfigureAwait(false);
 
-                if (result.IsFailure())
+                if (result is FtpStatus.Failed || result is FtpStatus.Skipped)
                 {
                     Downloaded = false;
                     Succeeded = false;
