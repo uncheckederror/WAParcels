@@ -314,7 +314,18 @@ namespace AllParcels
 
                 sink = Path.Combine(sink, fileName);
 
-                await client.ConnectAsync().ConfigureAwait(false);
+                try
+                {
+                    await client.ConnectAsync().ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Failed to connect to {host} via FTP.");
+                    Log.Error($"{ex.Message} {ex.StackTrace} {ex.TargetSite}");
+                    Downloaded = false;
+                    Succeeded = false;
+                    return false;
+                };
 
                 // Verify that the source directory exists, bail if it doesn't.
                 var checkExists = await client.FileExistsAsync(sourceFile).ConfigureAwait(false);
