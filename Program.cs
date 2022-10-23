@@ -108,7 +108,7 @@ namespace AllParcels
                     // Unzip the data.
                     if (county.Zipped && county.Downloaded)
                     {
-                        var checkUnzip = await county.TryUnzipFile().ConfigureAwait(false);
+                        var checkUnzip = county.TryUnzipFile();
                         Log.Information($"Unzipped {county.Name}");
                     }
                     else if (county.Downloaded)
@@ -150,7 +150,7 @@ namespace AllParcels
                         // Copy the data to the output folder.
                         foreach (var file in fileNames)
                         {
-                            FileInfo currentFile = new FileInfo(Path.Combine(county.RawFilePath, file));
+                            FileInfo currentFile = new(Path.Combine(county.RawFilePath, file));
                             if (currentFile.Exists)
                             {
                                 File.Copy(currentFile.FullName, Path.Combine(county.ResultFilePath, county.Name + currentFile.Extension), true);
@@ -214,12 +214,12 @@ namespace AllParcels
                 }
 
                 // Create an FTP client
-                var client = new FtpClient(host);
+                var client = new AsyncFtpClient(host);
 
                 // Handle optional ftp credentials.
-                if (!(Credential is null))
+                if (Credential is not null)
                 {
-                    client = new FtpClient()
+                    client = new AsyncFtpClient()
                     {
                         Host = host,
                         Credentials = Credential
@@ -235,27 +235,27 @@ namespace AllParcels
                     Directory.CreateDirectory(sink);
                 }
 
-                await client.ConnectAsync();
+                await client.AutoConnect();
 
                 // Verify that the source directory exists, bail if it doesn't.
-                var checkExists = await client.DirectoryExistsAsync(sourceFolder);
+                var checkExists = await client.DirectoryExists(sourceFolder);
 
                 if (!checkExists)
                 {
                     return false;
                 }
 
-                var results = await client.DownloadDirectoryAsync(sink, sourceFolder, FtpFolderSyncMode.Update);
+                var results = await client.DownloadDirectory(sink, sourceFolder, FtpFolderSyncMode.Update);
 
                 // Verify that we we successfully captured all of the files, and retry the download if we didn't.
                 foreach (var result in results)
                 {
-                    var check = await client.CompareFileAsync(result.LocalPath, result.RemotePath);
+                    var check = await client.CompareFile(result.LocalPath, result.RemotePath);
 
                     if (!(check == FtpCompareResult.Equal || check == FtpCompareResult.ChecksumNotSupported))
                     {
-                        await client.DownloadFileAsync(result.LocalPath, result.RemotePath);
-                        var recheck = await client.CompareFileAsync(result.LocalPath, result.RemotePath);
+                        await client.DownloadFile(result.LocalPath, result.RemotePath);
+                        var recheck = await client.CompareFile(result.LocalPath, result.RemotePath);
 
                         if (!(recheck == FtpCompareResult.Equal || recheck == FtpCompareResult.ChecksumNotSupported))
                         {
@@ -272,7 +272,7 @@ namespace AllParcels
                     }
                 }
 
-                await client.DisconnectAsync();
+                await client.Disconnect();
 
                 return true;
             }
@@ -292,12 +292,12 @@ namespace AllParcels
                 }
 
                 // Create an FTP client
-                var client = new FtpClient(host);
+                var client = new AsyncFtpClient(host);
 
                 // Handle optional ftp credentials.
-                if (!(Credential is null))
+                if (Credential is not null)
                 {
-                    client = new FtpClient()
+                    client = new AsyncFtpClient()
                     {
                         Host = host,
                         Credentials = Credential
@@ -317,7 +317,7 @@ namespace AllParcels
 
                 try
                 {
-                    await client.ConnectAsync().ConfigureAwait(false);
+                    await client.Connect().ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -329,7 +329,7 @@ namespace AllParcels
                 };
 
                 // Verify that the source directory exists, bail if it doesn't.
-                var checkExists = await client.FileExistsAsync(sourceFile).ConfigureAwait(false);
+                var checkExists = await client.FileExists(sourceFile).ConfigureAwait(false);
 
                 if (!checkExists)
                 {
@@ -337,7 +337,7 @@ namespace AllParcels
                     return false;
                 }
 
-                var result = await client.DownloadFileAsync(sink, sourceFile).ConfigureAwait(false);
+                var result = await client.DownloadFile(sink, sourceFile).ConfigureAwait(false);
 
                 if (result is FtpStatus.Failed || result is FtpStatus.Skipped)
                 {
@@ -351,13 +351,13 @@ namespace AllParcels
                 }
 
                 // Verify that we we successfully captured all of the files, and retry the download if we didn't.
-                var check = await client.CompareFileAsync(sink, sourceFile);
+                var check = await client.CompareFile(sink, sourceFile);
 
                 if (!(check == FtpCompareResult.Equal || check == FtpCompareResult.ChecksumNotSupported))
                 {
-                    result = await client.DownloadFileAsync(sink, sourceFile);
+                    _ = await client.DownloadFile(sink, sourceFile);
 
-                    var recheck = await client.CompareFileAsync(sink, sourceFile);
+                    var recheck = await client.CompareFile(sink, sourceFile);
 
                     if (!(recheck == FtpCompareResult.Equal || recheck == FtpCompareResult.ChecksumNotSupported))
                     {
@@ -375,7 +375,7 @@ namespace AllParcels
                     Downloaded = true;
                 }
 
-                await client.DisconnectAsync();
+                await client.Disconnect();
 
                 var fileExtension = Path.GetExtension(sink);
                 if (fileExtension == ".zip")
@@ -389,7 +389,7 @@ namespace AllParcels
             public async Task<bool> TryDownloadFile()
             {
                 var address = new Uri(DataSource);
-                var host = address.Host;
+                //var host = address.Host;
                 var scheme = address.Scheme;
 
                 // Bail if its not a file.
@@ -435,13 +435,11 @@ namespace AllParcels
                 return !string.IsNullOrWhiteSpace(RawFilePath);
             }
 
-            public async Task<bool> TryUnzipFile()
+            public bool TryUnzipFile()
             {
                 try
                 {
-                    await Task.Run(() =>
-                        ZipFile.ExtractToDirectory(RawFilePath, Path.GetDirectoryName(RawFilePath), true));
-
+                    ZipFile.ExtractToDirectory(RawFilePath, Path.GetDirectoryName(RawFilePath), true);
                     Succeeded = true;
                     return true;
                 }
@@ -449,7 +447,6 @@ namespace AllParcels
                 {
                     Log.Error($"Failed to unzip: {RawFilePath}");
                     Log.Error(ex.Message);
-                    Log.Error(ex.InnerException.ToString());
 
                     Succeeded = false;
                     return false;
