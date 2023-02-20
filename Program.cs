@@ -12,6 +12,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AllParcels
@@ -23,13 +24,15 @@ namespace AllParcels
         // Download the data
         // Unzip the files
         // *** Everything above this line is reality ***
-        // Load the data into Postgres using PostGIS
-        // Use Postgres + PostGIS to create vector tiles from the data
-        // Display the vector tiles of parcels in an interactive web map.
-        // Maintain this service like OpenStreetMaps.
+        // Merge the data into a single file using GDAL's ogr2ogr tool.
+        // Use Tippecanoe to generate MBTiles of the data.
+        // Use Protomaps to generate PTiles from the MBTiles.
+        // Host the static tiles on Github pages site.
         static async Task Main()
         {
-            Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+            Log.Logger = new LoggerConfiguration().WriteTo.Console()
+                .WriteTo.File("/", rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true, buffered: true)
+                .CreateLogger();
 
             var config = new ConfigurationBuilder()
                             .AddJsonFile("appsettings.json")
@@ -50,9 +53,9 @@ namespace AllParcels
 
             // Load county specific information from the JSON file.
             var counties = new List<County>();
-            var x = config.GetSection("Counties").GetChildren();
+            var appsettings = config.GetSection("Counties").GetChildren();
 
-            foreach (var item in x)
+            foreach (var item in appsettings)
             {
                 var y = item.GetChildren().ToList();
                 var name = y.Where(x => x.Key == "Name").Select(x => x.Value).FirstOrDefault();
@@ -78,9 +81,37 @@ namespace AllParcels
                 }
             }
 
-            Log.Information($"Found {counties.Count} counties to retrive parcels from.");
+            Log.Information($"Found {counties.Count} counties to retrieve parcels from.");
 
-            foreach (var county in counties)
+            await Parallel.ForEachAsync(counties, async (county, cancellationToken) =>
+            {
+                await GetParcelsAsync(county, cancellationToken);
+            });
+
+            if (File.Exists(Path.Combine(AppContext.BaseDirectory, "WA.zip")))
+            {
+                File.Delete(Path.Combine(AppContext.BaseDirectory, "WA.zip"));
+            }
+
+            // This step is now redundant because Github actions automatically compress artifacts.
+            // Zip up the output files.
+            //ZipFile.CreateFromDirectory(targetFolderPath, Path.Combine(AppContext.BaseDirectory, "WA.zip"));
+
+            Log.Information($"Successfully download parcels from {counties.Where(x => x.Succeeded == true).Count()} of {counties.Count} counties attempted.");
+            var failed = counties.Where(x => x.Succeeded == false).ToArray();
+            if (failed is not null && failed.Any())
+            {
+                Log.Error($"Failed to download parcels from these counties:");
+                var output = string.Empty;
+                foreach (var fail in failed)
+                {
+                    Log.Error($"{fail?.Name} - {fail?.DataSource}");
+                }
+            }
+            Log.Information($"Ingested data can be found at:");
+            Log.Information(targetFolderPath);
+
+            static async Task GetParcelsAsync(County county, CancellationToken cancellationToken)
             {
                 if (!string.IsNullOrWhiteSpace(county.DataSource))
                 {
@@ -108,7 +139,7 @@ namespace AllParcels
                     // Unzip the data.
                     if (county.Zipped && county.Downloaded)
                     {
-                        var checkUnzip = county.TryUnzipFile();
+                        var checkUnzip = TryUnzipFile(county);
                         Log.Information($"Unzipped {county.Name}");
                     }
                     else if (county.Downloaded)
@@ -159,31 +190,25 @@ namespace AllParcels
 
                         Log.Information($"Copied {fileNames.Count} {county.Name} County files to the Parcels folder.");
                     }
+
+                    static bool TryUnzipFile(County county)
+                    {
+                        try
+                        {
+                            ZipFile.ExtractToDirectory(county.RawFilePath, Path.GetDirectoryName(county.RawFilePath), true);
+                            county.Succeeded = true;
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error($"Failed to unzip: {county.RawFilePath}");
+                            Log.Error(ex.Message);
+                            county.Succeeded = false;
+                            return false;
+                        }
+                    }
                 }
             }
-
-            if (File.Exists(Path.Combine(AppContext.BaseDirectory, "WA.zip")))
-            {
-                File.Delete(Path.Combine(AppContext.BaseDirectory, "WA.zip"));
-            }
-
-            // This step isnow redundant because github actions automatically compress artifacts.
-            // Zip up the output files.
-            //ZipFile.CreateFromDirectory(targetFolderPath, Path.Combine(AppContext.BaseDirectory, "WA.zip"));
-
-            Log.Information($"Successfully download parcels from {counties.Where(x => x.Succeeded == true).Count()} of {counties.Count} counties attempted.");
-            var failed = counties.Where(x => x.Succeeded == false).ToArray();
-            if (failed is not null && failed.Any())
-            {
-                Log.Error($"Failed to download parcels from these counties:");
-                var output = string.Empty;
-                foreach (var fail in failed)
-                {
-                    Log.Error($"{fail?.Name} - {fail?.DataSource}");
-                }
-            }
-            Log.Information($"Ingested data can be found at:");
-            Log.Information(targetFolderPath);
         }
 
         public class County
@@ -433,24 +458,6 @@ namespace AllParcels
                 }
 
                 return !string.IsNullOrWhiteSpace(RawFilePath);
-            }
-
-            public bool TryUnzipFile()
-            {
-                try
-                {
-                    ZipFile.ExtractToDirectory(RawFilePath, Path.GetDirectoryName(RawFilePath), true);
-                    Succeeded = true;
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error($"Failed to unzip: {RawFilePath}");
-                    Log.Error(ex.Message);
-
-                    Succeeded = false;
-                    return false;
-                }
             }
         }
     }
