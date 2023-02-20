@@ -80,3 +80,8 @@ https://uncheckederror.github.io/KingCountyArcGISJS/wa-state-parcels.html
 Note: You can also run this from command line or VSCode if you have the latest version of [dotnet](https://dotnet.microsoft.com/) installed by setting the current directory to this project and using the "dotnet run" command. There's no platform specific code in this project so it should run on MacOS and Linux without modification although this has not been tested.
 
 If you find this project interesting or helpful please let me know.
+
+# Roadmap 2023
+- [ ] Use GDAL's ogr2ogr to merge all of these shapefiles into a single file.
+- [ ] Use tippecanoe to create a vector tileset from this parcel data.
+- [ ] Use Protomaps to create a static tileset and display it in a map on the github pages site for this repo.
