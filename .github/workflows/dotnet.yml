@@ -29,7 +29,7 @@ jobs:
       run: dotnet run
     - name: Display structure of the files
       run: ls -R
-      working-directory: /home/runner/work/WAParcels/WAParcels/bin/Debug/net6.0/
+      working-directory: /home/runner/work/WAParcels/WAParcels/bin/Debug/net7.0/
     - uses: actions/upload-artifact@v2
       with:
-        path: /home/runner/work/WAParcels/WAParcels/bin/Debug/net6.0/WA
+        path: /home/runner/work/WAParcels/WAParcels/bin/Debug/net7.0/WA
